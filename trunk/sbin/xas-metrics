@@ -1,0 +1,156 @@
+#!/usr/bin/perl
+# ============================================================================
+#             Copyright (c) 2016 Kevin L. Esteb All Rights Reserved
+#
+#
+# TITLE:       xas-metrics
+#
+# FACILITY:    XAS
+#
+# ABSTRACT:    This procedure will run the netstat command and parse that 
+#              output. This is then dumped to stdout as a JSON string.
+#
+# ENVIRONMENT: The XAS Middleware Environment
+#
+# PARAMETERS:
+#              --cfg-file     the config file to use
+#              --pid-file     the pid file to use
+#              --log-type     toggles the log type
+#              --log-facility changes the log facility to use
+#              --log-file     name of the log file
+#              --help         prints out a helpful help message
+#              --manual       prints out the procedures manual
+#              --version      prints out the procedures version
+#              --debug        toggles debug output
+#              --alerts       toggles alert notification
+#
+# RETURNS:
+#              0 - success
+#              1 - failure
+#
+# Version      Author                                              Date
+# -------      ----------------------------------------------      -----------
+# 0.01         Kevin Esteb                                         15-Dec-2015
+#
+# ============================================================================
+#
+
+use lib "../lib";
+use XAS::Apps::Metrics::Process;
+
+main: {
+
+    my $app = XAS::Apps::Metrics::Process->new(
+        -throws   => 'xas-metrics',
+    );
+
+    exit $app->run();
+
+}
+
+__END__
+
+=head1 NAME
+
+xas-metrics - load modules to collect performance statistics
+
+=head1 SYNOPSIS
+
+xas-metrics [--help] [--debug] [--manual] [--version]
+
+ options:
+   --cfg-file     the config file to use
+   --pid-file     the pid file to use
+   --help         outputs simple help text
+   --manual       outputs the procedures manual
+   --version      outputs the apps version
+   --debug        toogles debugging output
+   --alerts       toogles alert notifications
+   --log-file     name of the log file 
+   --log-type     toggles the log type
+   --log-facility changes the log facility
+
+=head1 DESCRIPTION
+
+This procedure will run the netstat command every so often for a period of 
+time. Any output from the command is written to STDOUT as a JSON formated 
+string.
+
+=head1 OPTIONS AND ARGUMENTS
+
+=over 4
+
+=item B<--cfg-file>
+
+The configuration file to use. Defaults to /etc/xas/xas-metrics.ini.
+
+=item B<--pid-file>
+
+The pid file to use. Defaults to /var/run/xas/xas-metrics.pid.
+
+=item B<--help>
+
+Displays a simple help message.
+
+=item B<--debug>
+
+Turns on debbuging.
+
+=item B<--alerts>
+
+Togggles alert notification.
+
+=item B<--log-type>
+
+Toggles the log type. Defaults to 'console'. Can be 'console', 'file', 
+'json' or 'syslog'.
+
+=item B<--log-facility>
+
+Toggles the log facilty. Defaults to 'local6'. This follows syslog
+convention.
+
+=item B<--log-file>
+
+Optional logfile. When specified the log type is set to 'file'.
+
+=item B<--manual>
+
+The complete documentation.
+
+=item B<--version>
+
+Prints out the apps version
+
+=back
+
+=head1 EXIT CODES
+
+ 0 - success
+ 1 - failure
+
+=head1 SEE ALSO
+
+=over 4
+
+=item L<XAS::Apps::Metrics::Process|XAS::Apps::Metrics::Process>
+
+=item L<XAS::Metrics|XAS::Metrics>
+
+=item L<XAS|XAS>
+
+=back
+
+=head1 AUTHOR
+
+Kevin L. Esteb, E<lt>kevin@kesteb.usE<gt>
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright (c) 2012-2016 Kevin L. Esteb
+
+This is free software; you can redistribute it and/or modify it under
+the terms of the Artistic License 2.0. For details, see the full text
+of the license at http://www.perlfoundation.org/artistic_license_2_0.
+
+=cut
