@@ -41,6 +41,12 @@ sub init {
 
     my $self = $class->SUPER::init(@_);
 
+    unless ($self->type ne '') {
+
+        $self->{'type'} = 'xas-metrics-netstat';
+
+    }
+
     my $command = 'netstat -i';
     my @fields  = qw(interface mtu met rx_ok rx_error rx_drop rx_ovr tx_ok tx_error tx_drop tx_ovr flag);
 

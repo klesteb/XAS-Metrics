@@ -42,6 +42,12 @@ sub init {
 
     my $self = $class->SUPER::init(@_);
 
+    unless ($self->type ne '') {
+
+        $self->{'type'} = 'xas-metrics-iostat-extended';
+
+    }
+
     my $now;
     my $first   = 0;
     my $command = sprintf('iostat -txd ALL %s', $self->interval);

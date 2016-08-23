@@ -36,6 +36,12 @@ sub init {
     my $self = $class->SUPER::init(@_);
     my $snapshots = int(86400 / $self->interval);
 
+    unless ($self->type ne '') {
+
+        $self->{'type'} = 'xas-metrics-nmon';
+
+    }
+
     unless (defined($self->{'fifo'})) {
 
         $self->{'fifo'} = File($self->env->lib, 'nmon');

@@ -41,6 +41,12 @@ sub init {
 
     my $self = $class->SUPER::init(@_);
 
+    unless ($self->type ne '') {
+
+        $self->{'type'} = 'xas-metrics-netstat-udp';
+
+    }
+
     my $command = 'netstat --udp --numeric --programs';
     my @fields  = qw(proto recv_queue send_queue local_address foreign_address state extras);
 

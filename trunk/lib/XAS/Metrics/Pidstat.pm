@@ -42,6 +42,12 @@ sub init {
 
     my $self = $class->SUPER::init(@_);
 
+    unless ($self->type ne '') {
+
+        $self->{'type'} = 'xas-metrics-pidstat';
+
+    }
+
     my $command = sprintf('pidstat -dhlrsw %s', $self->interval);
     my @fields = qw(time pid minflt_s majflt_s vsz rss mem stksize stkref kb_rd_s 
                     kb_wr_s kb_ccwr_s cswch_s nvcswch_s command);

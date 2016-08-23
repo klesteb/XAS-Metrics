@@ -5,11 +5,13 @@ our $VERSION = '0.01';
 use XAS::Metrics::Spooler;
 
 use XAS::Class
-  debug   => 0,
-  version => $VERSION,
-  base    => 'XAS::Lib::App::Service',
-  mixin   => 'XAS::Lib::Mixins::Configs',
-  utils   => 'load_module',
+  debug      => 0,
+  version    => $VERSION,
+  base       => 'XAS::Lib::App::Service',
+  mixin      => 'XAS::Lib::Mixins::Configs',
+  utils      => 'load_module trim dotid',
+  accessors  => 'cfg',
+  filesystem => 'Dir',
   vars => {
     SERVICE_NAME         => 'XAS_Metrics',
     SERVICE_DISPLAY_NAME => 'XAS Metrics',
@@ -29,6 +31,7 @@ sub setup {
     my $spooler = XAS::Metrics::Spooler->new(
         -alias     => 'metrics-spooler',
         -directory => Dir('metrics'),
+        -service   => $self->service,
     );
 
     $self->service->register('metrics-spooler');
@@ -40,20 +43,18 @@ sub setup {
         my ($alias)  = $section =~ /^metrics:(.*)/;
         my $module   = $self->cfg->val($section, 'module');
         my $interval = $self->cfg->val($section, 'interval', 60);
-        my $queue    = $self->cfg->val($section, 'queue');
-        my $type     = $self->cfg->val($section, 'packet-type');
+        my $type     = $self->cfg->val($section, 'packet-type', '');
 
         $alias = trim($alias);
 
         load_module($module);
 
         $module->new(
-            -alias       => $alias,
-            -queue       => $queue,
-            -packet_type => $type,
-            -interval    => $interval,
-            -service     => $self->service,
-            -connector   => 'metrics-spooler',
+            -alias     => $alias,
+            -type      => $type,
+            -interval  => $interval,
+            -service   => $self->service,
+            -connector => 'metrics-spooler',
         );
         
         $self->service->register($alias);

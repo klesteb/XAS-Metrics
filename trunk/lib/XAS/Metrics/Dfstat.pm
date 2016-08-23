@@ -1,4 +1,4 @@
-package XAS::Metrics::Mpstat;
+package XAS::Metrics::Dfstat;
 
 our $VERSION = '0.01';
 
@@ -6,7 +6,6 @@ use POE;
 use DateTime;
 use Data::Dumper;
 use XAS::Lib::Process;
-use DateTime::Format::Strptime;
 
 use XAS::Class
   debug     => 0,
@@ -19,8 +18,8 @@ use XAS::Class
       -service   => 1,
       -connector => 1,
       -interval  => { optional => 1, default => 60 },
-      -alias     => { optional => 1, default => 'mpstat' },
-      -type      => { optional => 1, default => 'xas-metrics-mpstats' },
+      -alias     => { optional => 1, default => 'dfstat' },
+      -type      => { optional => 1, default => 'xas-metrics-dfstat' },
     }
   }
 ;
@@ -44,45 +43,39 @@ sub init {
 
     unless ($self->type ne '') {
 
-        $self->{'type'} = 'xas-metrics-mpstats';
+        $self->{'type'} = 'xas-metrics-dfstat';
 
     }
 
-    my $command = sprintf('mpstat -P ALL %s', $self->interval);
-    my @fields = qw(time period cpu usr nice sys iowait irq soft steal guest idle);
-    my $strp = DateTime::Format::Strptime->new(
-        pattern   => '%F %r',
-        time_zone => 'local'
-    );
+    my $command = 'df -P';
+    my @fields = qw(name size used free capacity mount);
+
+    my $convert = sub {         # convert 12.3% to .123
+        my $percentage = shift;
+        $percentage =~ s{%}{};
+        return $percentage / 100;
+    };
 
     $self->{'process'} = XAS::Lib::Process->new(
         -alias        => $self->alias,
         -command      => $command,
         -user         => 'root',
         -group        => 'root',
+        -retry_delay  => $self->interval,
         -exit_retries => -1,
-        -environment  => { S_TIME_FORMAT => 'ISO' },
         -redirect     => 1,
         -output_handler => sub {
             my $line = trim(shift);
 
-            return if ($line =~ /Linux/);
-            return if ($line =~ /%usr/);
+            return if ($line =~ /^Filesystem/ );
             return if ($line eq '');
 
             my %info;
-            my $json;
-            my $dt = DateTime->now(time_zone => 'local');
+            my $now = DateTime->now(time_zone => 'local');
 
             @info{@fields} = split(/\s+/, $line);
-
-            my $date = sprintf('%s %s %s', $dt->ymd, $info{'time'}, $info{'period'});
-            my $now = $strp->parse_datetime($date);
-
             $info{'datetime'} = $now->strftime('%Y-%m-%dT%H:%M:%S.%3N%z');
-
-            delete $info{'time'};
-            delete $info{'period'};
+            $info{'capacity'} = $convert->($info{'capacity'});
 
             $self->log->debug(Dumper(\%info));
 
