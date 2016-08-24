@@ -38,7 +38,7 @@ sub write_data {
     retry {
 
         my $data = {
-            hostname => $self->env->host,
+            hostname => sprintf('%s.%s', $self->env->host, $self->env->domain),
             datetime => $dt->strftime('%Y-%m-%dT%H:%M:%S.%3N%z'),
             type     => $type,
             data     => $datum,
