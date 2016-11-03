@@ -40,23 +40,29 @@ sub setup {
 
         next if ($section !~ /^metrics:/);
 
-        my ($alias)  = $section =~ /^metrics:(.*)/;
-        my $module   = $self->cfg->val($section, 'module');
-        my $interval = $self->cfg->val($section, 'interval', 60);
-        my $type     = $self->cfg->val($section, 'packet-type', '');
+        my @args    = ();
+        my ($alias) = $section =~ /^metrics:(.*)/;
+        my @params  = $self->cfg->Parameters($section);
+        my $module  = $self->cfg->val($section, 'module');
 
         $alias = trim($alias);
 
         load_module($module);
 
-        $module->new(
-            -alias     => $alias,
-            -type      => $type,
-            -interval  => $interval,
-            -service   => $self->service,
-            -connector => 'metrics-spooler',
-        );
-        
+        push(@args, '-alias', $alias);
+        push(@args, '-service', $self->service);
+        push(@args, '-connector', 'metrics-spooler');
+
+        foreach my $param (@params) {
+
+            next if ($param =~ /module/i);
+
+            push(@args, "-$param", $self->cfg->val($section, $param));
+
+        }
+
+        $module->new(\@args);
+
         $self->service->register($alias);
 
     }
