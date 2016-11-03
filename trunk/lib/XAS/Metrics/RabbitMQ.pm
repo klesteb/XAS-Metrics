@@ -140,11 +140,11 @@ sub connections {
     my $self = shift;
     my $p = validate_params(\@_, {
         -name    => { optional => 1, default => undef },
-        -channel => { optional => 1, default => FALSE, depends => [ '-name' ] },
+        -channel => { optional => 1, default => FALSE, depends => [ 'name' ] },
     });
 
-    my $name    = $p->{'-name'};
-    my $channel = $p->{'-channel'};
+    my $name    = $p->{'name'};
+    my $channel = $p->{'channel'};
 
     my $data;
     my $request;
@@ -187,15 +187,15 @@ sub exchanges {
     my $self = shift;
     my $p = validate_params(\@_, {
         -vhost  => { optional => 1, default => undef },
-        -name   => { optional => 1, default => undef, depends => ['-vhost'] },
-        -source => { optional => 1, default => FALSE, depends => ['-name','-vhost'] },
-        -destination => { optional => 1, default => FALSE, depends => ['-name','-vhost'] },
+        -name   => { optional => 1, default => undef, depends => ['vhost'] },
+        -source => { optional => 1, default => FALSE, depends => ['name','vhost'] },
+        -destination => { optional => 1, default => FALSE, depends => ['name','vhost'] },
     });
 
-    my $name   = $p->{'-name'};
-    my $vhost  = $p->{'-vhost'};
-    my $source = $p->{'-source'};
-    my $dest   = $p->{'-destination'};
+    my $name   = $p->{'name'};
+    my $vhost  = $p->{'vhost'};
+    my $source = $p->{'source'};
+    my $dest   = $p->{'destination'};
 
     my $data;
     my $request;
@@ -242,13 +242,13 @@ sub queues {
     my $self = shift;
     my $p = validate_params(\@_, {
         -vhost    => { optional => 1, default => undef },
-        -name     => { optional => 1, default => undef, depends => ['-vhost'] },
-        -bindings => { optional => 1, default => FALSE, depends => ['-name','-vhost'] },
+        -name     => { optional => 1, default => undef, depends => ['vhost'] },
+        -bindings => { optional => 1, default => FALSE, depends => ['name','vhost'] },
     });
 
-    my $name     = $p->{'-name'};
-    my $vhost    = $p->{'-vhost'};
-    my $bindings = $p->{'-source'};
+    my $name     = $p->{'name'};
+    my $vhost    = $p->{'vhost'};
+    my $bindings = $p->{'source'};
 
     my $data;
     my $request;
@@ -281,11 +281,11 @@ sub vhosts {
     my $self = shift;
     my $p = validate_params(\@_, {
         -name        => { optional => 1, default => undef },
-        -permissions => { optional => 1, default => FALSE, depends => ['-name'] },
+        -permissions => { optional => 1, default => FALSE, depends => ['name'] },
     });
 
-    my $name        = $p->{'-name'};
-    my $permissions = $p->{'-permissions'};
+    my $name        = $p->{'name'};
+    my $permissions = $p->{'permissions'};
 
     my $data;
     my $request;
@@ -314,11 +314,11 @@ sub users {
     my $self = shift;
     my $p = validate_params(\@_, {
         -name        => { optional => 1, default => undef },
-        -permissions => { optional => 1, default => FALSE, depends => ['-name'] },
+        -permissions => { optional => 1, default => FALSE, depends => ['name'] },
     });
 
-    my $name        = $p->{'-name'};
-    my $permissions = $p->{'-permissions'};
+    my $name        = $p->{'name'};
+    my $permissions = $p->{'permissions'};
 
     my $data;
     my $request;
@@ -347,13 +347,13 @@ sub parameters {
     my $self = shift;
     my $p = validate_params(\@_, {
         -component => { optional => 1, default => undef },
-        -vhost     => { optional => 1, default => undef, depends => ['-component'] },
-        -name      => { optional => 1, default => undef, depends => ['-vhost','-component'] },
+        -vhost     => { optional => 1, default => undef, depends => ['component'] },
+        -name      => { optional => 1, default => undef, depends => ['vhost','component'] },
     });
 
-    my $name      = $p->{'-name'};
-    my $vhost     = $p->{'-vhost'};
-    my $component = $p->{'-permissions'};
+    my $name      = $p->{'name'};
+    my $vhost     = $p->{'vhost'};
+    my $component = $p->{'permissions'};
 
     my $data;
     my $request;
@@ -389,8 +389,8 @@ sub permissions {
         -name  => { optional => 1, default => undef },
     });
 
-    my $name  = $p->{'-name'};
-    my $vhost = $p->{'-vhost'};
+    my $name  = $p->{'name'};
+    my $vhost = $p->{'vhost'};
 
     my $data;
     my $request;
@@ -415,11 +415,11 @@ sub policies {
     my $self = shift;
     my $p = validate_params(\@_, {
         -vhost => { optional => 1, default => undef },
-        -name  => { optional => 1, default => undef, depends => ['-vhost'] },
+        -name  => { optional => 1, default => undef, depends => ['vhost'] },
     });
 
-    my $name  = $p->{'-name'};
-    my $vhost = $p->{'-vhost'};
+    my $name  = $p->{'name'};
+    my $vhost = $p->{'vhost'};
 
     my $data;
     my $request;
@@ -449,18 +449,18 @@ sub bindings {
     my $p = validate_params(\@_, {
         -vhost    => { optional => 1, default => undef },
         -props    => { optional => 1, default => undef },
-        -exchange => { optional => 1, default => undef, depends => ['-vhost'] },
-        -queue    => { optional => 1, default => undef, depends => ['-exchange'] },
-        -source   => { optional => 1, default => undef, depends => ['-vhost'] },
-        -destination => { optional => 1, default => undef, depends => ['-source'] },
+        -exchange => { optional => 1, default => undef, depends => ['vhost'] },
+        -queue    => { optional => 1, default => undef, depends => ['exchange'] },
+        -source   => { optional => 1, default => undef, depends => ['vhost'] },
+        -destination => { optional => 1, default => undef, depends => ['source'] },
     });
 
-    my $vhost       = $p->{'-vhost'};
-    my $props       = $p->{'-props'};
-    my $queue       = $p->{'-queue'};
-    my $source      = $p->{'-source'};
-    my $exchange    = $p->{'-exchange'};
-    my $destination = $p->{'-destination'};
+    my $vhost       = $p->{'vhost'};
+    my $props       = $p->{'props'};
+    my $queue       = $p->{'queue'};
+    my $source      = $p->{'source'};
+    my $exchange    = $p->{'exchange'};
+    my $destination = $p->{'destination'};
 
     my $data;
     my $request;
