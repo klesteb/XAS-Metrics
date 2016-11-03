@@ -10,4 +10,4 @@
 metrics_nocommand = no command given to run
 metrics_noreport  = "%s" is an unknown report type
 metrics_runerr    = command "%s" exited with a %s
-
+metrics_httperr   = HTTP status: %s, reason: %s

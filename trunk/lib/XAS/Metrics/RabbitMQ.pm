@@ -12,9 +12,6 @@ use XAS::Class
   utils     => ':validation dotid',
   accessors => 'url json',
   constants => 'TRUE FALSE',
-  messages => {
-      http_error => 'HTTP STATUS: %s, reason: %s',
-  },
   vars => {
     PARAMS => {
       -url => { optional => 1, default => 'http://localhost:15672/' },
@@ -556,7 +553,7 @@ sub _error_msg {
 
     $self->throw_msg(
         dotid($self->class) . '.http',
-        'http_error',
+        'metrics_httperr',
         $response->code, $response->message
     );
 

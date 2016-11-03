@@ -3,6 +3,7 @@ package XAS::Metrics::RabbitMQ::Base;
 our $VERSION = '0.01';
 
 use POE;
+use DateTime;
 use Try::Tiny;
 use XAS::Lib::POE::PubSub;
 use XAS::Metrics::RabbitMQ;
@@ -12,7 +13,7 @@ use XAS::Class
   version   => $VERSION,
   base      => 'XAS::Lib::POE::Service',
   mixin     => 'XAS::Lib::Mixins::Handlers',
-  accessors => 'rabbit',
+  accessors => 'rabbit datetime events',
   vars => {
     PARAMS => {
       -url              => 1,
@@ -77,7 +78,6 @@ use XAS::Class
 sub session_initialize {
     my $self = shift;
 
-    my $dir;
     my $alias = $self->alias;
 
     $self->log->debug("$alias: entering session_initialize()");
@@ -99,7 +99,7 @@ sub session_startup {
 
     $self->log->debug("$alias: entering session_startup()");
 
-    $poe_kernel->delay($self->interval, 'get_data');
+    $poe_kernel->delay('get_data', $self->interval);
 
     # walk the chain
 
@@ -116,6 +116,8 @@ sub session_pause {
 
     $self->log->debug("$alias: entering session_pause()");
 
+    $poe_kernel->delay('get_data');
+
     # walk the chain
 
     $self->SUPER::session_pause();
@@ -131,7 +133,7 @@ sub session_resume {
 
     $self->log->debug("$alias: entering session_resume()");
 
-    $poe_kernel->delay($self->interval, 'get_data');
+    $poe_kernel->delay('get_data', $self->interval);
 
     # walk the chain
 
@@ -147,6 +149,8 @@ sub session_shutdown {
     my $alias = $self->alias;
 
     $self->log->debug("$alias: entering session_cleanup()");
+
+    $poe_kernel->delay('get_data');
 
     # walk the chain
 
@@ -172,8 +176,9 @@ sub init {
 
     }
 
-    $self->{'events'} = XAS::Lib::POE::PubSub->new();
-    $self->{'rabbit'} = XAS::Metrics::RabbitMQ->new(\@args);
+    $self->{'events'}   = XAS::Lib::POE::PubSub->new();
+    $self->{'rabbit'}   = XAS::Metrics::RabbitMQ->new(\@args);
+    $self->{'datetime'} = DateTime->new();
 
     return $self;
 

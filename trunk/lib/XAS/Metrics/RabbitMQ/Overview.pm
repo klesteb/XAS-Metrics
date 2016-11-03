@@ -1,8 +1,9 @@
-package XAS::Metrics::RabbitMQ::Channels;
+package XAS::Metrics::RabbitMQ::Overview;
 
 our $VERSION = '0.01';
 
 use POE;
+use Try::Tiny;
 
 use XAS::Class
   debug   => 0,
@@ -21,11 +22,23 @@ use XAS::Class
 sub get_data {
     my ($self) = $_[OBJECT];
 
-    my $data = $self->rabbit->overview();
+    try {
 
+        my $data = $self->rabbit->overview();
+        my $now  = $self->datetime->now(time_zone => 'local');
+
+        $data->{'datetime'} = $now->strftime('%Y-%m-%dT%H:%M:%S.%3N%z');
+
+        $poe_kernel->post($self->connector, 'write_data', $data, $self->type);
+
+    } catch {
+
+        my $ex = $_;
+        $self->exception_handler($ex);
+
+    };
 
     $poe_kernel->delay($self->interval, 'get_data');
-    $poe_kernel->post($self->connector, 'write_data', \%info, $self->type);
 
 }
 
