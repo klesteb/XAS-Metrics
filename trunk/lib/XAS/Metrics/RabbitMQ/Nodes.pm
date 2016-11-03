@@ -28,6 +28,10 @@ use XAS::Class
 sub get_data {
     my ($self) = $_[OBJECT];
 
+    my $alias = $self->alias;
+
+    $self->log->debug("$alias: entering get_data()");
+
     try {
 
         my $datum = $self->rabbit->Nodes();
@@ -47,7 +51,8 @@ sub get_data {
 
     };
 
-    $poe_kernel->delay($self->interval, 'get_data');
+    $poe_kernel->delay('get_data', $self->interval);
+    $self->log->debug("$alias: leaving get_data()");
 
 }
 
