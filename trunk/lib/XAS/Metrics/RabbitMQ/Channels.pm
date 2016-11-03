@@ -9,6 +9,12 @@ use XAS::Class
   debug   => 0,
   version => $VERSION,
   base    => 'XAS::Metrics::RabbitMQ::Base',
+  vars => {
+    PARAMS => {
+      -alias => { optional => 1, default => 'rabbitmq-channels' },
+      -type  => { optional => 1, default => 'rabbitmq-channels' },
+    }
+  }
 ;
 
 # ---------------------------------------------------------------------

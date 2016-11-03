@@ -39,8 +39,8 @@ use XAS::Class
       -auth_method      => { optional => 1, default => undef },
       -proxy_auth       => { optional => 1, default => undef },
       -interval         => { optional => 1, default => 60 },
-      -alias            => { optional => 1, default => 'rabbitmq-channels' },
-      -type             => { optional => 1, default => 'rabbitmq-channels' },
+      -alias            => { optional => 1, default => 'rabbitmq-unknown' },
+      -type             => { optional => 1, default => 'rabbitmq-unknown' },
     },
     ARGS => [
         'url',
